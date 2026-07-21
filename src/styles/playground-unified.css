@@ -1,0 +1,15 @@
+.playground.unified .pg-toolbar{justify-content:space-between;}
+.pg-tabs{display:flex;gap:4px;}
+.pg-tab{
+  background:transparent;border:1px solid transparent;color:var(--text-faint);
+  padding:5px 12px;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;
+}
+.pg-tab:hover{color:var(--text);}
+.pg-tab.active{background:var(--bg-inset);border-color:var(--panel-border);color:var(--accent);}
+.pg-actions{display:flex;gap:6px;}
+
+.playground.unified .pg-panes{height:380px;}
+.playground.unified.fullscreen .pg-panes{height:calc(100vh - 130px);}
+.pg-pane-editor{height:100%;}
+.pg-pane-editor .pg-code{width:100%;height:100%;padding:12px;}
+.pg-pane-editor .pg-frame{width:100%;height:100%;border:none;background:#fff;}

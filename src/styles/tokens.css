@@ -1,0 +1,69 @@
+/* ============================================================
+   DESIGN TOKENS — single source of truth for color & type
+   Every module (HTML, CSS, future JS/React) reads these same
+   variable names. Only the values change per theme.
+   ============================================================ */
+:root{
+  --bg:            #0f1419;
+  --bg-raised:     #161c24;
+  --bg-inset:      #0a0e13;
+  --panel-border:  #232b36;
+  --text:          #dde3ea;
+  --text-dim:      #8b96a5;
+  --text-faint:    #5a6472;
+  --accent:        #4fd1c5;
+  --accent-dim:    rgba(79,209,197,.16);
+  --accent2:       #f6ad55;
+  --accent2-dim:   rgba(246,173,85,.16);
+  --danger:        #f56565;
+  --danger-dim:    rgba(245,101,101,.14);
+  --ok:            #68d391;
+  --ok-dim:        rgba(104,211,145,.14);
+  --mono:          'JetBrains Mono','Fira Code',ui-monospace,Consolas,monospace;
+  --sans:          'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --display:       'Space Grotesk',var(--sans);
+  --radius:        10px;
+  --radius-sm:     6px;
+  --sidebar-w:     280px;
+  --topbar-h:      60px;
+  --shadow:        0 8px 24px rgba(0,0,0,.35);
+}
+
+html[data-theme="light"]{
+  --bg:            #f7f8fa;
+  --bg-raised:     #ffffff;
+  --bg-inset:      #eef1f5;
+  --panel-border:  #dfe4ea;
+  --text:          #1a202c;
+  --text-dim:      #4a5568;
+  --text-faint:    #94a3b8;
+  --accent:        #0e9488;
+  --accent-dim:    #d9f3ef;
+  --accent2:       #c2670c;
+  --accent2-dim:   #ffe3bf;
+  --danger-dim:    #fde1e1;
+  --ok-dim:        #e1f6ea;
+  --shadow:        0 8px 24px rgba(30,41,59,.10);
+}
+
+html[data-theme="glass"]{
+  --bg:            #100e1a;
+  --bg-raised:     rgba(255,255,255,.06);
+  --bg-inset:      rgba(255,255,255,.045);
+  --panel-border:  rgba(255,255,255,.14);
+  --text:          #f1eefb;
+  --text-dim:      #b3add1;
+  --text-faint:    #7a7398;
+  --accent:        #5eead4;
+  --accent-dim:    rgba(94,234,212,.16);
+  --accent2:       #f6ad55;
+  --accent2-dim:   rgba(246,173,85,.16);
+  --danger-dim:    rgba(245,101,101,.16);
+  --ok-dim:        rgba(104,211,145,.16);
+}
+html[data-theme="glass"] body{
+  background:
+    radial-gradient(circle at 15% 10%,#2a2145 0%,transparent 45%),
+    radial-gradient(circle at 85% 90%,#12324a 0%,transparent 50%),
+    var(--bg);
+}

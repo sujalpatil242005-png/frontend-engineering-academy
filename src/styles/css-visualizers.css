@@ -1,0 +1,56 @@
+/* ============================================================
+   CSS module visual styles — ported from CSS Academy's original
+   stylesheet. Variable names remapped onto the unified tokens
+   from Phase 1 (--teal -> --accent, --amber -> --accent2, etc.)
+   so these render correctly in all three shared themes instead
+   of CSS Academy's own separate theme system.
+   ============================================================ */
+
+.eyebrow{
+  display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent2);
+  background:var(--accent2-dim);padding:3px 9px;border-radius:5px;margin-bottom:12px;letter-spacing:.03em;
+}
+.lede{font-size:16px;color:var(--text);line-height:1.7;}
+.callout{border:1px solid var(--panel-border);border-left:3px solid var(--accent);background:var(--bg-inset);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:13.5px;color:var(--text-dim);}
+.callout.warn{border-left-color:var(--danger);}
+.callout.tip{border-left-color:var(--accent2);}
+.callout b{color:var(--text);}
+
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;}
+.tag{font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:5px;background:var(--bg-raised);border:1px solid var(--panel-border);color:var(--text-dim);}
+.tag.teal{color:var(--accent);border-color:var(--accent-dim);}
+.tag.amber{color:var(--accent2);border-color:var(--accent2-dim);}
+
+/* ---------- Interactive visualizer panels (box model, selectors demo, display/position labs, etc.) ---------- */
+.viz-panel{background:var(--bg-inset);border:1px solid var(--panel-border);border-radius:12px;padding:24px;margin:18px 0;}
+.viz-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px;}
+.ctrl{display:flex;flex-direction:column;gap:5px;}
+.ctrl label{font-size:11px;color:var(--text-faint);font-family:var(--mono);display:flex;justify-content:space-between;}
+.ctrl label span{color:var(--accent);}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent);}
+.ctrl select,.ctrl input[type=text]{
+  background:var(--bg-raised);border:1px solid var(--panel-border);color:var(--text);border-radius:6px;
+  padding:6px 8px;font-size:12.5px;font-family:var(--mono);
+}
+.viz-stage{
+  min-height:260px;background:var(--bg-raised);border:1px solid var(--panel-border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;overflow:auto;padding:20px;
+}
+.code-out{
+  margin-top:14px;background:var(--bg-raised);border:1px solid var(--panel-border);border-radius:8px;padding:12px 14px;
+  font-family:var(--mono);font-size:12px;color:var(--accent);white-space:pre-wrap;position:relative;
+}
+
+/* ---------- Box model lab ---------- */
+.bm-margin{background:repeating-linear-gradient(45deg,var(--accent2-dim),var(--accent2-dim) 6px,transparent 6px,transparent 12px);border:1px dashed var(--accent2);padding:var(--m,24px);position:relative;border-radius:4px;}
+.bm-border{background:var(--danger-dim);border:2px solid var(--danger);padding:var(--b,10px);position:relative;}
+.bm-padding{background:var(--accent-dim);border:1px dashed var(--accent);padding:var(--p,20px);position:relative;}
+.bm-content{background:var(--bg-raised);border:1px solid var(--panel-border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--text);}
+.bm-label{position:absolute;top:2px;left:6px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;opacity:.75;}
+
+/* ---------- Flex/Grid lab stage items ---------- */
+.lab-item{
+  background:linear-gradient(135deg,var(--accent-dim),var(--bg-raised));border:1px solid var(--accent-dim);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+  color:var(--accent);font-size:12px;font-weight:600;min-width:44px;min-height:44px;
+}

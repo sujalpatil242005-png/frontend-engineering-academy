@@ -1,0 +1,22 @@
+.topic-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.topic-header h2{font-size:1.5rem;margin:0;display:flex;align-items:center;gap:10px;}
+.topic-header-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.bookmark-btn{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:1.15rem;line-height:1;padding:0;}
+.bookmark-btn.on{color:var(--accent2);}
+
+.notes-panel{
+  background:var(--bg-inset);border:1px solid var(--panel-border);border-radius:var(--radius);
+  padding:14px 16px;margin:0 0 20px;
+}
+.notes-panel-label{display:block;font-size:.78rem;color:var(--text-faint);margin-bottom:8px;}
+.notes-textarea{
+  width:100%;min-height:110px;resize:vertical;background:var(--bg-raised);border:1px solid var(--panel-border);
+  border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--sans);font-size:.88rem;line-height:1.5;
+}
+.notes-textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.notes-save-hint{font-size:.7rem;color:var(--text-faint);margin-top:6px;text-align:right;}
+
+.footer-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:20px;border-top:1px solid var(--panel-border);}
+.footer-nav .btn[disabled]{opacity:.4;cursor:default;}
+
+.lesson-body{max-width:840px;}

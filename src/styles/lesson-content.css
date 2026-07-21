@@ -1,0 +1,49 @@
+/* ---------- Playground extras (gutter + fullscreen) ---------- */
+.playground.fullscreen{position:fixed;inset:16px;z-index:500;box-shadow:0 0 0 9999px rgba(0,0,0,.6);}
+.playground.fullscreen .pg-body{height:calc(100vh - 130px);}
+.pg-editor-wrap .line-numbers{
+  position:absolute;left:0;top:0;bottom:0;width:38px;background:var(--bg);
+  color:var(--text-faint);font-family:var(--mono);font-size:.78rem;line-height:1.55;
+  padding:12px 0;text-align:right;padding-right:8px;user-select:none;overflow:hidden;
+}
+.pg-code{padding-left:46px;}
+
+/* ---------- Interview Q&A disclosure ---------- */
+.qa-item{border:1px solid var(--panel-border);border-radius:8px;margin:10px 0;overflow:hidden;background:var(--bg-inset);}
+.qa-q{padding:12px 14px;cursor:pointer;font-weight:600;display:flex;gap:10px;align-items:flex-start;}
+.qa-q .qmark{color:var(--accent);font-family:var(--mono);flex:none;}
+.qa-a{padding:0 14px 14px 34px;color:var(--text-dim);display:none;font-size:.92rem;}
+.qa-item.open .qa-a{display:block;}
+.qa-item.open .qa-q{color:var(--accent);}
+
+/* ---------- Inline diagrams (pure CSS/HTML, no images) ---------- */
+.diagram{background:var(--bg-inset);border:1px dashed var(--panel-border);border-radius:10px;padding:22px;margin:16px 0;overflow-x:auto;}
+.tree{font-family:var(--mono);font-size:.85rem;}
+.tree ul{list-style:none;margin:0;padding-left:22px;border-left:1px dashed var(--panel-border);}
+.tree > ul{border-left:none;padding-left:0;}
+.tree li{position:relative;padding:4px 0 4px 16px;}
+.tree li::before{content:"";position:absolute;left:-1px;top:16px;width:14px;height:1px;background:var(--panel-border);}
+.tree .node{background:var(--bg-raised);border:1px solid var(--panel-border);border-radius:6px;padding:2px 8px;color:var(--accent);}
+.tree .node.text{color:var(--text-dim);border-style:dashed;}
+
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-family:var(--mono);font-size:.85rem;}
+.flow .fbox{background:var(--bg-raised);border:1px solid var(--accent-dim);color:var(--accent);border-radius:8px;padding:8px 14px;}
+.flow .farrow{color:var(--text-faint);}
+
+.layout-diagram{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:.8rem;}
+.layout-diagram .ld-box{border:1px solid var(--accent-dim);border-radius:6px;padding:8px 12px;color:var(--accent);background:var(--bg-raised);}
+.layout-diagram .ld-row{display:flex;gap:6px;}
+.layout-diagram .ld-row .ld-box{flex:1;}
+.layout-diagram .ld-nested{margin-left:18px;border-left:2px solid var(--panel-border);padding-left:12px;}
+
+/* ---------- Cheat sheet / tag reference filter chips ---------- */
+.cheat-filter{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap;}
+.cheat-filter button{
+  background:var(--bg-inset);border:1px solid var(--panel-border);color:var(--text-dim);
+  padding:6px 12px;border-radius:20px;font-size:.8rem;cursor:pointer;
+}
+.cheat-filter button.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);}
+#cheatSearch,#tagrefSearch{
+  width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--panel-border);
+  background:var(--bg-inset);color:var(--text);margin-bottom:6px;font-family:var(--sans);
+}

@@ -1,0 +1,197 @@
+/* ============================= RESET & TYPE ============================= */
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.6;
+  transition:background .25s ease, color .25s ease;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:700;letter-spacing:-0.01em;color:var(--text);margin:0 0 .5em;}
+code,pre,.mono{font-family:var(--mono);}
+a{color:var(--accent);}
+button{font-family:var(--sans);cursor:pointer;}
+::selection{background:var(--accent-dim);color:var(--text);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--panel-border);border-radius:8px;}
+
+/* ---------- Accessibility: visible keyboard focus ---------- */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;
+}
+.sidebar-group-summary:focus-visible{outline-offset:-2px;}
+
+/* ---------- Subtle content transition ---------- */
+@media (prefers-reduced-motion: no-preference){
+  .main > *{animation:fea-fade-in .18s ease both;}
+}
+@keyframes fea-fade-in{
+  from{opacity:0;transform:translateY(4px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ---------- Signature tag-chip element (carried over from CSS Academy) ---------- */
+.tag-chip{
+  display:inline-flex;align-items:center;gap:2px;
+  font-family:var(--mono);font-weight:600;font-size:.85em;
+  color:var(--accent);background:var(--bg-inset);
+  border:1px solid var(--panel-border);border-radius:6px;padding:2px 8px;white-space:nowrap;
+}
+.tag-chip::before{content:"<";opacity:.55;}
+.tag-chip::after{content:">";opacity:.55;}
+.tag-chip.closing::before{content:"</";}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);
+  display:flex;align-items:center;gap:16px;padding:0 20px;
+  background:var(--bg-raised);border-bottom:1px solid var(--panel-border);z-index:100;
+}
+.brand{font-family:var(--mono);font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px;color:var(--text);white-space:nowrap;}
+.brand .bracket{color:var(--accent);}
+#menuToggle{display:none;background:var(--bg-inset);border:1px solid var(--panel-border);color:var(--text);border-radius:8px;padding:8px 10px;}
+
+.topbar .search-wrap{flex:1;max-width:520px;position:relative;}
+#globalSearch{
+  width:100%;padding:9px 14px 9px 34px;border-radius:8px;border:1px solid var(--panel-border);
+  background:var(--bg-inset);color:var(--text);font-family:var(--sans);font-size:.92rem;
+}
+#globalSearch:focus{outline:2px solid var(--accent);outline-offset:1px;}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:.9rem;pointer-events:none;}
+#searchResults{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg-raised);
+  border:1px solid var(--panel-border);border-radius:8px;max-height:60vh;overflow:auto;
+  box-shadow:var(--shadow);display:none;z-index:200;
+}
+#searchResults.show{display:block;}
+#searchResults .res-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--panel-border);}
+#searchResults .res-item:last-child{border-bottom:none;}
+#searchResults .res-item:hover,#searchResults .res-item.active{background:var(--bg-inset);}
+#searchResults .res-item .res-kind{font-size:.7rem;color:var(--accent2);font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;}
+#searchResults .res-item .res-title{font-weight:600;}
+#searchResults .no-results{padding:14px;color:var(--text-faint);font-size:.9rem;}
+
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.icon-btn{
+  background:var(--bg-inset);border:1px solid var(--panel-border);color:var(--text);border-radius:8px;
+  padding:8px 10px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:600;
+}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+.icon-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+
+/* ---------- Layout ---------- */
+.shell{display:flex;padding-top:var(--topbar-h);min-height:100vh;}
+.sidebar{
+  position:fixed;top:var(--topbar-h);left:0;bottom:0;width:var(--sidebar-w);
+  background:var(--bg-raised);border-right:1px solid var(--panel-border);
+  overflow-y:auto;padding:16px 10px 60px;z-index:90;
+}
+.sidebar .nav-group{margin-bottom:4px;}
+.sidebar .nav-group-title{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-faint);
+  padding:14px 10px 6px;font-weight:700;
+}
+.sidebar a.nav-link{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;
+  border-radius:8px;color:var(--text-dim);text-decoration:none;font-size:.88rem;cursor:pointer;
+}
+.sidebar a.nav-link:hover{background:var(--bg-inset);color:var(--text);}
+.sidebar a.nav-link.active{background:var(--accent-dim);color:var(--accent);font-weight:600;}
+.sidebar a.nav-link .lock{margin-left:auto;font-size:.68rem;color:var(--text-faint);font-family:var(--mono);}
+.sidebar a.nav-link .pct{font-size:.7rem;color:var(--text-faint);font-family:var(--mono);}
+
+/* ---------- Expandable course tree (active course on a lesson page) ---------- */
+.sidebar-course.active-course{margin-bottom:4px;}
+.sidebar-course-title{padding:8px 10px 4px;font-weight:700;font-size:.9rem;color:var(--text);}
+.sidebar-course-summary{font-size:.95rem;color:var(--text);padding:8px 10px;}
+.sidebar-course-summary .sidebar-group-name{font-weight:700;}
+.sidebar-course-toggle > .sidebar-group-body{padding-left:0;}
+.sidebar-group{border-radius:8px;}
+.sidebar-group-summary{
+  list-style:none;display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;
+  cursor:pointer;font-size:.82rem;color:var(--text-dim);font-weight:600;
+}
+.sidebar-group-name{flex:1;}
+.sidebar-group-count{font-size:.68rem;color:var(--text-faint);font-family:var(--mono);font-weight:400;}
+.sidebar-group-summary::-webkit-details-marker{display:none;}
+.sidebar-group-summary:hover{background:var(--bg-inset);color:var(--text);}
+.sidebar-group .disclosure-arrow{display:inline-block;font-size:.65rem;color:var(--text-faint);transition:transform .15s ease;}
+.sidebar-group[open] .disclosure-arrow{transform:rotate(90deg);}
+.sidebar-group-body{padding-left:8px;display:flex;flex-direction:column;gap:1px;margin:2px 0 6px;}
+.nav-link.lesson-link{padding:6px 10px 6px 20px;font-size:.82rem;gap:8px;}
+.nav-link.lesson-link .lesson-icon{width:14px;flex-shrink:0;text-align:center;color:var(--text-faint);font-size:.75rem;}
+.nav-link.lesson-link.done .lesson-icon{color:var(--ok);}
+.nav-link.lesson-link.active{background:var(--accent-dim);color:var(--accent);font-weight:600;}
+.nav-link.lesson-link.active .lesson-icon{color:var(--accent);}
+
+/* ---------- Back to dashboard button ---------- */
+.back-to-dashboard{
+  display:flex;align-items:center;gap:8px;margin:10px 10px 6px;padding:9px 12px;
+  border-radius:8px;border:1px solid var(--panel-border);background:var(--bg-inset);
+  color:var(--text-dim);font-size:.85rem;font-weight:600;cursor:pointer;
+}
+.back-to-dashboard:hover{color:var(--accent);border-color:var(--accent-dim);}
+
+/* ---------- Sidebar overlay (mobile only) ---------- */
+.sidebar-overlay{
+  position:fixed;inset:0;top:var(--topbar-h);background:rgba(0,0,0,.5);z-index:80;
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+
+/* ---------- Hamburger animation ---------- */
+#menuToggle{position:relative;width:38px;display:flex;}
+#menuToggle .hbar{display:inline-block;transition:transform .2s ease, opacity .2s ease;}
+#menuToggle.open .hbar-open{display:none;}
+#menuToggle:not(.open) .hbar-close{display:none;}
+
+/* ---------- Reading progress ---------- */
+.reading-progress{
+  position:fixed;top:var(--topbar-h);left:0;height:3px;width:0%;background:var(--accent);
+  z-index:99;transition:width .1s linear;
+}
+
+/* ============================================================
+   Sidebar visibility — ONE class, `.shell.sidebar-visible`,
+   drives both the desktop collapse (sidebar slides out, main
+   content reflows to fill the space) and the mobile overlay
+   (sidebar slides in over the content, dark backdrop appears).
+   Toggled from app.js; desktop preference is remembered.
+   ============================================================ */
+.sidebar{transition:transform .22s ease;}
+.main{transition:margin-left .22s ease;margin-left:0;flex:1;min-width:0;padding:28px 34px 120px;max-width:1180px;}
+
+.shell:not(.sidebar-visible) .sidebar{transform:translateX(-105%);box-shadow:none;}
+.shell.sidebar-visible .sidebar{transform:translateX(0);}
+
+@media(min-width:901px){
+  .shell.sidebar-visible .main{margin-left:var(--sidebar-w);}
+}
+
+@media(max-width:900px){
+  :root{--sidebar-w:250px;}
+  .sidebar{box-shadow:var(--shadow);}
+  .main{margin-left:0 !important;padding-left:18px;padding-right:18px;}
+  .shell.sidebar-visible .sidebar-overlay{opacity:1;pointer-events:auto;}
+  .topbar .search-wrap{max-width:none;}
+}
+
+/* ---------- Modal (Bookmarks / Notes popups) ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;
+}
+.modal-overlay.show{opacity:1;pointer-events:auto;}
+.modal-box{
+  background:var(--bg-raised);border:1px solid var(--panel-border);border-radius:var(--radius);
+  width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;box-shadow:var(--shadow);
+}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--panel-border);}
+.modal-header h3{margin:0;font-size:1.05rem;}
+.modal-close{background:none;border:none;color:var(--text-faint);font-size:1rem;cursor:pointer;padding:4px;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:18px 20px;overflow-y:auto;}
+body.modal-open{overflow:hidden;}

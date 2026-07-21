@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend Engineering Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/styles/tokens.css">
+<link rel="stylesheet" href="src/styles/base.css">
+<link rel="stylesheet" href="src/styles/components.css">
+<link rel="stylesheet" href="src/styles/dashboard.css">
+<link rel="stylesheet" href="src/styles/lesson-chrome.css">
+<link rel="stylesheet" href="src/styles/lesson-content.css">
+<link rel="stylesheet" href="src/styles/css-visualizers.css">
+<link rel="stylesheet" href="src/styles/playground-unified.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button id="menuToggle" class="icon-btn" aria-label="Toggle menu" aria-expanded="false">
+  <span class="hbar hbar-open">&#9776;</span><span class="hbar hbar-close">&#10005;</span>
+</button>
+  <div class="brand"><span class="bracket">&lt;</span>Frontend Engineering Academy<span class="bracket">/&gt;</span></div>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input id="globalSearch" type="text" placeholder="Search topics, examples, interview questions, projects&hellip;" autocomplete="off">
+    <div id="searchResults"></div>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" data-theme-btn="dark">Dark</button>
+    <button class="icon-btn" data-theme-btn="light">Light</button>
+    <button class="icon-btn" data-theme-btn="glass">Glass</button>
+  </div>
+</header>
+<div class="reading-progress" id="readingProgress"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar"></nav>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main" id="mainContent"></main>
+</div>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
