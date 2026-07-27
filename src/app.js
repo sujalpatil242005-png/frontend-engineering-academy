@@ -9,6 +9,7 @@ import { renderFooterNav, wireFooterNav } from './components/footer-nav.js';
 import { renderHtmlLesson } from './modules/html/index.js';
 import { renderCssLesson } from './modules/css/index.js';
 import { renderJavascriptLesson } from './modules/javascript/index.js';
+import { renderReactLesson } from './modules/react/index.js';
 import { renderUnifiedPlaygroundHTML, initUnifiedPlayground } from './components/playground.js';
 import { renderBookmarksView } from './components/bookmarks-view.js';
 import { renderNotesView } from './components/notes-view.js';
@@ -106,6 +107,16 @@ function renderLessonPlaceholder(moduleId, lessonId) {
 
   if (moduleId === 'javascript') {
     renderJavascriptLesson(mainEl, {
+      lessonId,
+      moduleLabel: mod.label,
+      groupLabel: group ? group.group : '',
+      title,
+    });
+    return;
+  }
+
+  if (moduleId === 'react') {
+    renderReactLesson(mainEl, {
       lessonId,
       moduleLabel: mod.label,
       groupLabel: group ? group.group : '',

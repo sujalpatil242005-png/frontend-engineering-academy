@@ -27,7 +27,7 @@ export const MODULES = [
     difficulty: 'Intermediate', category: 'Programming', minutesPerLesson: 10,
   },
   {
-    id: 'react', label: 'React', tagline: 'Coming soon', status: 'locked', curriculum: REACT_CURRICULUM,
+    id: 'react', label: 'React', tagline: 'Beginner → internship-ready', status: 'active', curriculum: REACT_CURRICULUM,
     description: 'Components, hooks, state management, and building real interfaces on top of the DOM.',
     difficulty: 'Advanced', category: 'Frameworks', minutesPerLesson: 12,
   },

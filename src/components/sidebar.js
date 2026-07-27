@@ -105,10 +105,13 @@ export function renderSidebar(container) {
     return `<a class="nav-link${isActive ? ' active' : ''}" data-nav="${link.id}">${link.label}</a>`;
   }).join('');
 
+  const onDashboard = route.view === 'dashboard';
+
   container.innerHTML = `
+    ${onDashboard ? '' : `
     <button class="back-to-dashboard" data-nav="dashboard">
       <span>&#8592;</span> <span>Back to Dashboard</span>
-    </button>
+    </button>`}
     <div class="nav-group">
       <div class="nav-group-title">${onLessonPage ? 'This course' : 'Learning paths'}</div>
       ${moduleSections}
