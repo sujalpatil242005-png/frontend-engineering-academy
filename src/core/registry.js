@@ -22,7 +22,7 @@ export const MODULES = [
     difficulty: 'Intermediate', category: 'Styling', minutesPerLesson: 10,
   },
   {
-    id: 'javascript', label: 'JavaScript', tagline: 'Coming soon', status: 'locked', curriculum: JAVASCRIPT_CURRICULUM,
+    id: 'javascript', label: 'JavaScript', tagline: 'Beginner → internship-ready', status: 'active', curriculum: JAVASCRIPT_CURRICULUM,
     description: 'Core language, the DOM, async patterns, and the interview questions that come up most.',
     difficulty: 'Intermediate', category: 'Programming', minutesPerLesson: 10,
   },
