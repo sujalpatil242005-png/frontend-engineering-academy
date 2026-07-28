@@ -23,7 +23,7 @@ console.log(greet("World"));
 const nums = [1, 2, 3, 4, 5];
 console.log(nums.map(n => n * n));`;
 
-function renderJsPlaygroundHTML() {
+export function renderJsPlaygroundHTML() {
   return `
     <div class="playground unified" data-js-pg>
       <div class="pg-toolbar">
@@ -47,7 +47,7 @@ function renderJsPlaygroundHTML() {
     </div>`;
 }
 
-function initJsPlayground(root) {
+export function initJsPlayground(root) {
   const pg = root.querySelector('[data-js-pg]');
   if (!pg || pg.dataset.wired) return;
   pg.dataset.wired = 'true';

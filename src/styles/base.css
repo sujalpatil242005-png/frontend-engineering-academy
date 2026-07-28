@@ -141,11 +141,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   opacity:0;pointer-events:none;transition:opacity .2s ease;
 }
 
-/* ---------- Hamburger animation ---------- */
+/* ---------- Hamburger ---------- */
 #menuToggle{position:relative;width:38px;display:flex;}
-#menuToggle .hbar{display:inline-block;transition:transform .2s ease, opacity .2s ease;}
-#menuToggle.open .hbar-open{display:none;}
-#menuToggle:not(.open) .hbar-close{display:none;}
+#menuToggle .hbar{display:inline-block;}
 
 /* ---------- Reading progress ---------- */
 .reading-progress{

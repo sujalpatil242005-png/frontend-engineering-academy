@@ -73,7 +73,7 @@ const JS_PLAYGROUND_DEFAULT = `function App() {
 
 render(<App />);`;
 
-function renderReactPlaygroundHTML() {
+export function renderReactPlaygroundHTML() {
   return `
     <div class="playground unified" data-react-pg>
       <div class="pg-toolbar">
@@ -96,7 +96,7 @@ function renderReactPlaygroundHTML() {
     </div>`;
 }
 
-function initReactPlayground(root) {
+export function initReactPlayground(root) {
   const pg = root.querySelector('[data-react-pg]');
   if (!pg || pg.dataset.wired) return;
   pg.dataset.wired = 'true';

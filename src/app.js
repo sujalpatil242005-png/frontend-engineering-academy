@@ -8,8 +8,8 @@ import { renderLessonChrome, wireLessonChrome } from './components/lesson-chrome
 import { renderFooterNav, wireFooterNav } from './components/footer-nav.js';
 import { renderHtmlLesson } from './modules/html/index.js';
 import { renderCssLesson } from './modules/css/index.js';
-import { renderJavascriptLesson } from './modules/javascript/index.js';
-import { renderReactLesson } from './modules/react/index.js';
+import { renderJavascriptLesson, renderJsPlaygroundHTML, initJsPlayground } from './modules/javascript/index.js';
+import { renderReactLesson, renderReactPlaygroundHTML, initReactPlayground } from './modules/react/index.js';
 import { renderUnifiedPlaygroundHTML, initUnifiedPlayground } from './components/playground.js';
 import { renderBookmarksView } from './components/bookmarks-view.js';
 import { renderNotesView } from './components/notes-view.js';
@@ -158,15 +158,7 @@ function renderUtilityPlaceholder(viewId) {
   }
 
   if (viewId === 'playground') {
-    mainEl.innerHTML = `
-      <h2>Playground</h2>
-      <p class="lede">A scratch space for any HTML + CSS experiment, separate from the lesson playgrounds. Autosaves as you type.</p>
-      ${renderUnifiedPlaygroundHTML({
-        storageKey: 'fea_scratch_playground',
-        defaultHtml: '<h1>Hello, world</h1>\n<p>Start typing to experiment.</p>',
-        defaultCss: 'body{ font-family: sans-serif; padding: 24px; }',
-      })}`;
-    initUnifiedPlayground(mainEl);
+    renderPracticePlayground(mainEl);
     return;
   }
 
@@ -175,6 +167,51 @@ function renderUtilityPlaceholder(viewId) {
       <h4>${viewId.replace(/-/g, ' ')}</h4>
       <p>This shared view is planned for a later build phase.</p>
     </div>`;
+}
+
+let practicePlaygroundMode = 'html';
+
+function renderPracticePlayground(mainEl) {
+  const modes = [
+    { id: 'html', label: 'HTML + CSS' },
+    { id: 'js', label: 'JavaScript' },
+    { id: 'react', label: 'React' },
+  ];
+
+  const tabsHTML = modes.map((m) => `
+    <button class="btn${practicePlaygroundMode === m.id ? ' primary' : ''}" data-pgmode="${m.id}">${m.label}</button>
+  `).join('');
+
+  let body = '';
+  if (practicePlaygroundMode === 'html') {
+    body = renderUnifiedPlaygroundHTML({
+      storageKey: 'fea_scratch_playground',
+      defaultHtml: '<h1>Hello, world</h1>\n<p>Start typing to experiment.</p>',
+      defaultCss: 'body{ font-family: sans-serif; padding: 24px; }',
+    });
+  } else if (practicePlaygroundMode === 'js') {
+    body = renderJsPlaygroundHTML();
+  } else if (practicePlaygroundMode === 'react') {
+    body = renderReactPlaygroundHTML();
+  }
+
+  mainEl.innerHTML = `
+    <h2>Playground</h2>
+    <p class="lede">A scratch space for any HTML+CSS, JavaScript, or React experiment, separate from the lesson playgrounds. Autosaves as you type.</p>
+    <div class="tag-row" style="margin-bottom:16px;">${tabsHTML}</div>
+    ${body}
+  `;
+
+  mainEl.querySelectorAll('[data-pgmode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      practicePlaygroundMode = btn.dataset.pgmode;
+      renderPracticePlayground(mainEl);
+    });
+  });
+
+  if (practicePlaygroundMode === 'html') initUnifiedPlayground(mainEl);
+  else if (practicePlaygroundMode === 'js') initJsPlayground(mainEl);
+  else if (practicePlaygroundMode === 'react') initReactPlayground(mainEl);
 }
 
 function render(route) {
