@@ -1,15 +1,11 @@
 /* ============================================================
-   modules/javascript/index.js — the JavaScript module's render
-   entry point. Mirrors modules/css/index.js. The "Free Playground"
-   lesson gets its own lightweight JS-console runner here (the
-   shared components/playground.js unified editor is HTML/CSS only
-   for now — JS_ENABLED is still false there), so it renders inline
-   instead of going through renderUnifiedPlaygroundHTML.
+   modules/javascript/playground.js — the JS console runner used
+   by both the course's "Free Playground" lesson and the Practice
+   playground's JS tab. Unchanged logic from the vanilla build's
+   modules/javascript/index.js — still a plain string-returning +
+   DOM-wiring pair, called from a useEffect in LessonPage.jsx /
+   PracticePlayground.jsx.
    ============================================================ */
-
-import { RENDERERS, POST_RENDER } from './renderers.js';
-import { renderLessonChrome, wireLessonChrome } from '../../components/lesson-chrome.js';
-import { renderFooterNav, wireFooterNav } from '../../components/footer-nav.js';
 
 const JS_PLAYGROUND_DEFAULT = `// Write JavaScript here and hit Run.
 // console.log() output shows up below.
@@ -147,40 +143,4 @@ export function initJsPlayground(root) {
   });
 
   run();
-}
-
-export function renderJavascriptLesson(container, { lessonId, moduleLabel, groupLabel, title }) {
-  if (lessonId === 'playground') {
-    container.innerHTML = `
-      ${renderLessonChrome({ moduleLabel, groupLabel, title, moduleId: 'javascript', lessonId })}
-      <div class="lesson-body">
-        <p class="lede">A live JavaScript console — write code, hit Run, and see console.log() output. Runs in a sandboxed iframe; nothing touches a server, and your code is saved automatically.</p>
-        ${renderJsPlaygroundHTML()}
-      </div>
-      ${renderFooterNav('javascript', lessonId)}
-    `;
-    wireLessonChrome(container, { moduleId: 'javascript', lessonId });
-    wireFooterNav(container, 'javascript', lessonId);
-    initJsPlayground(container);
-    return;
-  }
-
-  const contentFn = RENDERERS[lessonId];
-
-  if (!contentFn) {
-    container.innerHTML = `<div class="empty-state"><p>Unknown JavaScript lesson: ${lessonId}</p></div>`;
-    return;
-  }
-
-  container.innerHTML = `
-    ${renderLessonChrome({ moduleLabel, groupLabel, title, moduleId: 'javascript', lessonId })}
-    <div class="lesson-body">${contentFn()}</div>
-    ${renderFooterNav('javascript', lessonId)}
-  `;
-
-  wireLessonChrome(container, { moduleId: 'javascript', lessonId });
-  wireFooterNav(container, 'javascript', lessonId);
-
-  const postRenderFn = POST_RENDER[lessonId];
-  if (postRenderFn) postRenderFn();
 }

@@ -1,39 +1,41 @@
 /* ============================================================
-   modules/react/index.js — the React module's render entry point.
-   Mirrors modules/css/index.js and modules/javascript/index.js.
-   Live demos and the Playground need React + Babel (JSX transform)
-   loaded globally via CDN <script> tags in index.html — see
-   window.React / window.ReactDOM / window.Babel checks below.
+   modules/react/playground.js — the live JSX runner, adapted from
+   the vanilla build's modules/react/index.js. The vanilla version
+   loaded React/ReactDOM/Babel from a CDN into window globals
+   because there was no bundler. Now that this is a real Vite+React
+   app, we use the app's own bundled React/ReactDOM instance (no
+   duplicate copy, no CDN) and @babel/standalone from npm purely
+   for its in-browser JSX-to-JS transform.
+
+   window.__feaRenderLiveJsx stays as a global bridge because
+   modules/react/renderers.js (unchanged from the vanilla build)
+   calls it directly from plain functions — those lesson-content
+   files aren't React components themselves, they return HTML
+   strings, so they reach back into React the same way the old
+   app did: through this one documented global.
    ============================================================ */
 
-import { RENDERERS, POST_RENDER } from './renderers.js';
-import { renderLessonChrome, wireLessonChrome } from '../../components/lesson-chrome.js';
-import { renderFooterNav, wireFooterNav } from '../../components/footer-nav.js';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import * as Babel from '@babel/standalone';
 
 const REACT_MISSING_MSG =
-  '<div class="empty-state"><p>React failed to load from the CDN. Check your internet connection and reload — this module needs React, ReactDOM, and Babel Standalone (see index.html).</p></div>';
+  '<div class="empty-state"><p>The live demo failed to load. Reload the page and try again.</p></div>';
 
-/* ------------------------------------------------------------
-   Shared JSX runner. `code` is a string of JSX/JS that defines
-   one or more components and ends with a call to render(<X />).
-   We expose `render`, plus React/useState/useEffect/etc, as
-   locals inside the transformed function so lesson snippets can
-   write JSX directly without their own import lines.
-   ------------------------------------------------------------ */
 function renderLiveJsx(rootId, code) {
   const rootEl = document.getElementById(rootId);
   if (!rootEl) return;
 
-  if (!window.React || !window.ReactDOM || !window.Babel) {
-    rootEl.innerHTML = REACT_MISSING_MSG;
-    return;
-  }
-
   try {
-    const transformed = window.Babel.transform(code, {
+    const transformed = Babel.transform(code, {
       presets: [['react', { runtime: 'classic' }]],
     }).code;
-    const root = window.ReactDOM.createRoot(rootEl);
+
+    if (!rootEl.__feaReactRoot) {
+      rootEl.__feaReactRoot = ReactDOM.createRoot(rootEl);
+    }
+    const root = rootEl.__feaReactRoot;
+
     const runner = new Function(
       'React', 'ReactDOM', 'useState', 'useEffect', 'useRef', 'useContext', 'createContext', 'root',
       `${transformed}
@@ -41,9 +43,9 @@ function renderLiveJsx(rootId, code) {
        return render;`
     );
     runner(
-      window.React, window.ReactDOM,
-      window.React.useState, window.React.useEffect, window.React.useRef,
-      window.React.useContext, window.React.createContext,
+      React, ReactDOM,
+      React.useState, React.useEffect, React.useRef,
+      React.useContext, React.createContext,
       root
     );
   } catch (err) {
@@ -51,11 +53,9 @@ function renderLiveJsx(rootId, code) {
   }
 }
 
-// Exposed globally so renderers.js POST_RENDER functions (plain JS,
-// no bundler-driven imports) can call it after their HTML is inserted.
 window.__feaRenderLiveJsx = renderLiveJsx;
 
-const JS_PLAYGROUND_DEFAULT = `function App() {
+const REACT_PLAYGROUND_DEFAULT = `function App() {
   const [count, setCount] = useState(0);
 
   return (
@@ -104,7 +104,7 @@ export function initReactPlayground(root) {
   const storageKey = 'fea_react_free_playground';
   const codeEl = pg.querySelector('[data-lang="jsx"]');
 
-  codeEl.value = localStorage.getItem(storageKey) || JS_PLAYGROUND_DEFAULT;
+  codeEl.value = localStorage.getItem(storageKey) || REACT_PLAYGROUND_DEFAULT;
 
   function persist() {
     localStorage.setItem(storageKey, codeEl.value);
@@ -149,7 +149,7 @@ export function initReactPlayground(root) {
       if (act === 'run') {
         run();
       } else if (act === 'reset') {
-        codeEl.value = JS_PLAYGROUND_DEFAULT;
+        codeEl.value = REACT_PLAYGROUND_DEFAULT;
         persist();
       } else if (act === 'copy') {
         navigator.clipboard.writeText(codeEl.value).then(() => {
@@ -172,40 +172,4 @@ export function initReactPlayground(root) {
   });
 
   run();
-}
-
-export function renderReactLesson(container, { lessonId, moduleLabel, groupLabel, title }) {
-  if (lessonId === 'playground') {
-    container.innerHTML = `
-      ${renderLessonChrome({ moduleLabel, groupLabel, title, moduleId: 'react', lessonId })}
-      <div class="lesson-body">
-        <p class="lede">A live JSX editor — write a component, hit Run, and see it rendered with real React. Runs entirely in your browser via Babel Standalone; nothing touches a server, and your code is saved automatically.</p>
-        ${renderReactPlaygroundHTML()}
-      </div>
-      ${renderFooterNav('react', lessonId)}
-    `;
-    wireLessonChrome(container, { moduleId: 'react', lessonId });
-    wireFooterNav(container, 'react', lessonId);
-    initReactPlayground(container);
-    return;
-  }
-
-  const contentFn = RENDERERS[lessonId];
-
-  if (!contentFn) {
-    container.innerHTML = `<div class="empty-state"><p>Unknown React lesson: ${lessonId}</p></div>`;
-    return;
-  }
-
-  container.innerHTML = `
-    ${renderLessonChrome({ moduleLabel, groupLabel, title, moduleId: 'react', lessonId })}
-    <div class="lesson-body">${contentFn()}</div>
-    ${renderFooterNav('react', lessonId)}
-  `;
-
-  wireLessonChrome(container, { moduleId: 'react', lessonId });
-  wireFooterNav(container, 'react', lessonId);
-
-  const postRenderFn = POST_RENDER[lessonId];
-  if (postRenderFn) postRenderFn();
 }

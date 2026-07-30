@@ -1,27 +1,14 @@
 /* ============================================================
-   router.js — tiny hash router. Every module's lessons resolve
-   to #/{moduleId}/{lessonId}. Utility views (playground, notes,
-   bookmarks, settings, etc.) resolve to #/{viewId}.
+   router.js — thin compatibility shim. The app itself now routes
+   via react-router-dom's <HashRouter>, but legacy-engine.js (CSS
+   module content, unchanged from the vanilla build) still calls
+   navigate() directly from inside a raw HTML string's inline
+   onclick handler (window.goTo) to cross-link to another lesson.
+   Setting location.hash here is enough — HashRouter listens for
+   hashchange and updates the route exactly like it would for a
+   normal link click.
    ============================================================ */
-
-const KNOWN_MODULE_IDS = ['html', 'css', 'javascript', 'react'];
-
-export function parseHash() {
-  const raw = location.hash.replace(/^#\/?/, '');
-  if (!raw || raw === 'dashboard') return { view: 'dashboard' };
-
-  const parts = raw.split('/').filter(Boolean);
-  if (parts.length >= 2 && KNOWN_MODULE_IDS.includes(parts[0])) {
-    return { view: 'lesson', moduleId: parts[0], lessonId: parts[1] };
-  }
-  return { view: parts[0] };
-}
 
 export function navigate(path) {
   location.hash = path.startsWith('#') ? path : '#/' + path;
-}
-
-export function onRouteChange(handler) {
-  window.addEventListener('hashchange', () => handler(parseHash()));
-  handler(parseHash());
 }
