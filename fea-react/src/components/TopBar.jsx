@@ -1,8 +1,17 @@
 import { useStore, setTheme } from '../store/useStore.js';
+import { useAuth } from '../auth/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
 import Search from './Search.jsx';
 
 export default function TopBar({ onToggleMenu }) {
   const state = useStore();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
 
   return (
     <header className="topbar">
@@ -21,6 +30,12 @@ export default function TopBar({ onToggleMenu }) {
             {t[0].toUpperCase() + t.slice(1)}
           </button>
         ))}
+        {user && (
+          <>
+            <span style={{ color: 'var(--text-dim)', fontSize: 13, marginLeft: 4 }}>{user.name || user.email}</span>
+            <button className="icon-btn" onClick={handleLogout}>Log out</button>
+          </>
+        )}
       </div>
     </header>
   );

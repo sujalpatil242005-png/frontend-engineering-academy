@@ -2,11 +2,21 @@
    store.js — the ONE state container for the whole app.
    Replaces the four separate localStorage-keyed stores that
    HTML Academy and CSS Academy each maintained independently.
+
+   Now also synced with the backend once a user is logged in:
+   localStorage stays as an instant local echo (so the UI never
+   waits on a network round trip), while every commit() also
+   fires a debounced PUT to /api/state. On login, loadRemoteState()
+   overwrites local state with whatever the server has for that
+   user — the same object shape either way, so every action below
+   (toggleLessonComplete, toggleBookmark, setNote, etc.) needed
+   zero changes.
    ============================================================ */
 
 const STORAGE_KEY = 'fea_state_v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-function defaultState() {
+export function defaultState() {
   return {
     theme: 'dark',
     progress: {},     // { [moduleId]: { [lessonId]: true } }
@@ -35,12 +45,27 @@ function loadState() {
 
 let state = loadState();
 const listeners = new Set();
+let authToken = null;
+let remotePersistTimer = null;
 
-function persist() {
+function persistLocal() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (err) {
-    console.warn('[store] failed to persist state', err);
+    console.warn('[store] failed to persist state locally', err);
+  }
+}
+
+async function persistRemote() {
+  if (!authToken) return;
+  try {
+    await fetch(`${API_BASE}/api/state`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+      body: JSON.stringify(state),
+    });
+  } catch (err) {
+    console.warn('[store] failed to sync state to server', err);
   }
 }
 
@@ -49,7 +74,44 @@ function notify() {
 }
 
 function commit() {
-  persist();
+  persistLocal();
+  notify();
+  clearTimeout(remotePersistTimer);
+  remotePersistTimer = setTimeout(persistRemote, 500);
+}
+
+/* ---------- auth integration ---------- */
+
+// Called by AuthContext right after login/signup succeed, and on
+// app boot if a saved token is still valid. Clearing (null) stops
+// further remote syncs — used on logout.
+export function setAuthToken(token) {
+  authToken = token;
+}
+
+// Called by AuthContext right after login — replaces local state
+// with whatever the server has for this user.
+export async function loadRemoteState() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/state`, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    if (!res.ok) return;
+    state = await res.json();
+    persistLocal();
+    notify();
+  } catch (err) {
+    console.warn('[store] failed to load state from server', err);
+  }
+}
+
+// Called by AuthContext on logout — wipes in-memory + local state
+// back to a clean slate so the next person to use this browser
+// doesn't see the previous account's progress.
+export function resetToDefault() {
+  state = defaultState();
+  persistLocal();
   notify();
 }
 

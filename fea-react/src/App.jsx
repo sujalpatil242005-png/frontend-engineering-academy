@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useStore, isSidebarCollapsed, setSidebarCollapsed } from './store/useStore.js';
 import { ModalProvider } from './components/ModalContext.jsx';
+import ProtectedRoute from './auth/ProtectedRoute.jsx';
 import TopBar from './components/TopBar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -11,6 +12,9 @@ import Challenges from './pages/Challenges.jsx';
 import Projects from './pages/Projects.jsx';
 import InterviewPrep from './pages/InterviewPrep.jsx';
 import Settings from './pages/Settings.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
+import AuthCallbackPage from './pages/AuthCallbackPage.jsx';
 
 function isDesktop() {
   return window.innerWidth > 900;
@@ -91,8 +95,20 @@ function AppShell() {
 
 export default function App() {
   return (
-    <ModalProvider>
-      <AppShell />
-    </ModalProvider>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route
+        path="/*"
+        element={
+          <ProtectedRoute>
+            <ModalProvider>
+              <AppShell />
+            </ModalProvider>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }

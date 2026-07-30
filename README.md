@@ -1,22 +1,82 @@
-# Frontend Engineering Academy — React (Vite) build
+# Frontend Engineering Academy — with backend + auth
 
-## Run it
+Two projects:
+- `fea-react/` — the app you already had (Vite + React)
+- `fea-backend/` — new: Node + Express + SQLite, handling signup/login/OAuth and syncing progress/bookmarks/notes per account
+
+## Run both locally
+
+**Backend:**
 ```
+cd fea-backend
+cp .env.example .env
+npm install
+npm start
+```
+Runs on http://localhost:4000. Uses a local SQLite file (`fea.db`) — no external database to set up.
+
+**Frontend:**
+```
+cd fea-react
+cp .env.example .env
 npm install
 npm run dev
 ```
-Then open the printed localhost URL. For a production build: `npm run build` (output in `dist/`).
+Runs on http://localhost:5173 and talks to the backend at the URL in `VITE_API_URL`.
 
-## What changed vs. the vanilla version
-- **Real React app**: Vite + React 18, `react-router-dom` (`HashRouter`, so URLs stay `#/moduleId/lessonId` — old bookmarked links still work), and `useSyncExternalStore` bridging the same `store.js` state container into React (`src/store/useStore.js`).
-- **Every UI chrome piece is now a genuine React component**: Sidebar, Dashboard (+ all its widgets), TopBar, Search, LessonChrome, FooterNav, Modal (via `createPortal`), Bookmarks/Notes views, the Practice Playground tabs.
-- **Lesson content stayed as-is on purpose**: `modules/html/content.js`, `modules/css/legacy-engine.js`, `modules/javascript/renderers.js`, and `modules/react/renderers.js` are byte-for-byte the same functions as the vanilla build — each still returns an HTML string and wires up its own interactivity (quizzes, labs, playgrounds) via `document.getElementById`. `LessonPage.jsx` mounts that string with `dangerouslySetInnerHTML` and calls the same wiring function from a `useEffect`. This is a deliberate, common migration pattern — hand-converting ~300KB of lesson content into JSX would take weeks for zero behavioral difference. If you ever want a specific lesson type as "real" JSX (e.g. to add new dynamic behavior), that's a good next incremental step, one lesson type at a time.
-- **The React module's live JSX demos and Playground** now use the app's own bundled React/ReactDOM (via `@babel/standalone` for the in-browser JSX transform) instead of loading a second copy of React from a CDN like the vanilla build did.
+With both running: open the frontend, sign up with an email/password, and you're in — progress/bookmarks/notes now live on the backend instead of just localStorage.
 
-## About CSS Modules
-You asked for CSS Modules, and it's worth being upfront about why the styling stayed as plain global CSS files instead: a large share of the class names in `components.css` (`.btn`, `.card`, `.callout`, `.tag`, `.code-out`, `.quiz-box`, `.viz-panel`, etc.) are referenced from *inside* the HTML-string lesson content described above. CSS Modules work by hashing class names per-component — but those strings are plain text, not JSX, so they have no way to reference a hashed class name. Scoping those files would silently break styling on every lesson.
+## Verified before delivery
+- Backend: `npm install` succeeds; manually tested end-to-end with curl — signup, login, `/me`, unauthenticated requests correctly rejected with 401, and state correctly persists across a PUT then GET.
+- Frontend: `npm install && npm run build` succeeds (86 modules, no errors) with the new auth pages, context, and store changes wired in.
+- I do **not** have a way to click through a live browser in this environment, so the actual login-form-to-dashboard flow, and the Google/GitHub buttons specifically, haven't been visually confirmed — see the checklist below.
 
-The classes used only by genuinely React-owned chrome (sidebar, dashboard, topbar, modal, etc.) don't have this conflict and could be moved to CSS Modules — but they live in the same shared files as the content-vocabulary classes above, so splitting them out cleanly is a real (but doable) follow-up task, not something to do silently alongside a full-app rewrite. Happy to do that split as a dedicated next step if you still want it — just say the word.
+## Email + password
+Works out of the box, no setup needed — this is what I could fully verify end-to-end above.
 
-## Verified
-`npm install && npm run build` completes successfully (76 modules, no errors) — confirms every import/export across the converted components and the untouched content files resolves correctly.
+## Google / GitHub login — needs your own credentials
+I can't generate real OAuth credentials for you (they're tied to your own Google/GitHub developer accounts), so these are wired up and ready, but inactive until you add credentials:
+
+### Google
+1. Go to https://console.cloud.google.com/apis/credentials
+2. Create a project (or use an existing one) → **Create Credentials → OAuth client ID → Web application**
+3. Authorized redirect URI: `http://localhost:4000/api/auth/google/callback`
+4. Copy the Client ID and Client Secret into `fea-backend/.env`:
+   ```
+   GOOGLE_CLIENT_ID=...
+   GOOGLE_CLIENT_SECRET=...
+   ```
+5. Restart the backend.
+
+### GitHub
+1. Go to https://github.com/settings/developers → **New OAuth App**
+2. Homepage URL: `http://localhost:5173`
+3. Authorization callback URL: `http://localhost:4000/api/auth/github/callback`
+4. Copy the Client ID and Client Secret into `fea-backend/.env`:
+   ```
+   GITHUB_CLIENT_ID=...
+   GITHUB_CLIENT_SECRET=...
+   ```
+5. Restart the backend.
+
+Until these are set, the Google/GitHub buttons on the login page will show a clear "not configured yet" error instead of crashing — email/password keeps working either way.
+
+## What changed architecturally
+- **`store.js`** (frontend) kept its exact same public API (`toggleLessonComplete`, `toggleBookmark`, `setNote`, etc.) — every existing component that used it needed zero changes. Under the hood, `commit()` now also fires a debounced `PUT /api/state` once a user is logged in, and `loadRemoteState()` overwrites local state with the server's copy right after login. LocalStorage stays as an instant local echo so the UI never waits on network round trips.
+- **New `AuthContext`** (`src/auth/AuthContext.jsx`) manages the session: token storage, login/signup/logout, and the OAuth redirect handoff.
+- **`ProtectedRoute`** wraps the whole app shell — everything except `/login`, `/signup`, and `/auth/callback` requires a session.
+- **Backend** uses SQLite via `better-sqlite3` (one file, `fea.db`) — no external database service to sign up for. Swap for Postgres/MySQL later by only touching `fea-backend/src/db/`; none of the route logic would need to change.
+- **State storage shape** on the backend is identical to what `store.js` used to keep in localStorage (one JSON blob per user) — this is what made the migration mechanical rather than a rewrite.
+
+## Manual test checklist (since I can't click through this myself)
+1. Start both servers.
+2. Sign up with a new email/password → should land on the dashboard.
+3. Complete a lesson, bookmark another, add a note.
+4. Log out, log back in with the same account → progress/bookmark/note should still be there (proves backend sync, not just localStorage).
+5. Open the same account in a different browser (or incognito) → should see the same progress (proves it's really server-side, not per-browser).
+6. If you set up Google/GitHub credentials: try both login buttons end-to-end.
+7. Try visiting a lesson URL directly while logged out → should redirect to `/login`.
+
+## Deploying
+- **Backend**: any Node host (Render, Railway, Fly.io, a VPS). SQLite's file needs persistent disk — most of those platforms support a persistent volume; if not, swap to a hosted Postgres.
+- **Frontend**: same static hosts as before (Vercel, Netlify, GitHub Pages) — just make sure `VITE_API_URL` in production points at your deployed backend's real URL, and set `FRONTEND_URL`/`BACKEND_URL` in the backend's `.env` to the real deployed URLs too (OAuth callback URLs need updating in the Google/GitHub consoles as well).
